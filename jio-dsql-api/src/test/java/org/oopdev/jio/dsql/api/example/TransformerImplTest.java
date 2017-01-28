@@ -1,5 +1,6 @@
 package org.oopdev.jio.dsql.api.example;
 
+import org.hibernate.Session;
 import org.oopdev.jio.dsql.api.criteria.Criteria;
 import org.oopdev.jio.dsql.api.criteria.transform.Result;
 import org.oopdev.jio.dsql.api.criteria.transform.Transformer;
@@ -11,8 +12,10 @@ import java.util.List;
  */
 public class TransformerImplTest<T> implements Transformer<T> {
     private final Class<T> transformClass;
-    public TransformerImplTest(Class<T> transformClass) {
+    private final Session session;
+    public TransformerImplTest(Class<T> transformClass, Session session) {
         this.transformClass = transformClass;
+        this.session = session;
     }
 
     @Override
@@ -26,17 +29,17 @@ public class TransformerImplTest<T> implements Transformer<T> {
     }
 
     @Override
-    public Result<T> result(Criteria<T> criteria) {
+    public Result<T> pairList(Criteria<T> criteria) {
         return null;
     }
 
     @Override
-    public T findOne() {
+    public T findOne(Criteria<T> criteria) {
         return null;
     }
 
     @Override
-    public Object uniqueResult() {
+    public Object uniqueResult(Criteria<T> criteria) {
         return null;
     }
 

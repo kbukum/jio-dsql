@@ -1,6 +1,7 @@
 package org.oopdev.jio.dsql.api.criteria;
 
 import org.oopdev.jio.dsql.api.criteria.criterion.Criterion;
+import org.oopdev.jio.dsql.api.criteria.transform.Result;
 import org.oopdev.jio.dsql.api.criteria.transform.Transformer;
 import org.oopdev.jio.dsql.common.lang.TypeReference;
 
@@ -88,6 +89,29 @@ public class Criteria<T> {
     public List<T> list() {
        assertTransformerIsExist();
        return transformer.list(this);
+    }
+
+    public Long count() {
+        assertTransformerIsExist();
+        return transformer.count(this);
+    }
+    /**
+     *
+     * @return
+     */
+    public Result<T> pairList() {
+        assertTransformerIsExist();
+        return transformer.pairList(this);
+    }
+
+    public T findOne(){
+        assertTransformerIsExist();
+        return transformer.findOne(this);
+    }
+
+    public Object uniqueResult() {
+        assertTransformerIsExist();
+        return transformer.uniqueResult(this);
     }
 
     public Transformer<T> getTransformer() {

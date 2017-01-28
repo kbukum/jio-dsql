@@ -10,8 +10,8 @@ import java.util.List;
 public interface Transformer<T> {
     List<T> list(Criteria<T> criteria);
     Long count(Criteria<T> criteria);
-    Result<T> result(Criteria<T> criteria);
-    T findOne();
-    Object uniqueResult();
+    Result<T> pairList(Criteria<T> criteria);
+    T findOne(Criteria<T> criteria);
+    Object uniqueResult(Criteria<T> criteria);
     Class<T> getTransformClass();
 }

@@ -1,11 +1,16 @@
 package org.oopdev.jio.dsql.common.lang;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 
 public abstract class TypeReference<T> {
+    /**
+     * holds given class
+     */
     protected final Class<T> clazz;
 
+    /**
+     * checks Generic class and finds it's type.
+     */
     protected TypeReference() {
         Type superClass = this.getClass().getGenericSuperclass();
         if(superClass instanceof Class) {
@@ -14,6 +19,10 @@ public abstract class TypeReference<T> {
         clazz = (Class<T>) ((ParameterizedType) ((ParameterizedType)superClass).getActualTypeArguments()[0]).getRawType();
     }
 
+    /**
+     * get given generic class type
+     * @return
+     */
     public Class<T> getClazz() {
         return clazz;
     }
