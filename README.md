@@ -1,1 +1,1 @@
-# jio-dsql ( Java IO Data Structure Query Language )
+# jio-dsql ( Java IO Data Structure Query Criteria )
