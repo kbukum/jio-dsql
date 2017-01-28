@@ -4,11 +4,12 @@ import org.hibernate.Session;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import org.oopdev.jio.dsql.api.DataTestTools;
+import org.oopdev.jio.dsql.api.criteria.transform.Result;
+import org.oopdev.jio.dsql.api.test.tools.DataTestTools;
 import org.oopdev.jio.dsql.api.criteria.transform.Transformer;
-import org.oopdev.jio.dsql.api.example.TransformerImplTest;
-import org.oopdev.jio.dsql.api.example.dto.UserDto;
-import org.oopdev.jio.dsql.api.example.entity.User;
+import org.oopdev.jio.dsql.api.test.tools.TransformerImplTest;
+import org.oopdev.jio.dsql.api.test.tools.dto.UserDto;
+import org.oopdev.jio.dsql.api.test.tools.entity.User;
 
 import java.util.List;
 import java.util.Map;
@@ -18,175 +19,92 @@ import java.util.Map;
  */
 public class CriteriaTest extends DataTestTools {
 
-
-    @Test
-    public void getTransformClass() throws Exception {
-        Session session = sessionFactory.openSession();
-        // Entity Class Test
-        Class<User> entityClass = Criteria.forEntity(User.class).getTransformClass();
-        assertNotNull(entityClass);
-        assertEquals(entityClass, User.class);
-
-        // DTO Class
-        Class<UserDto> clazz = Criteria.forDto(User.class, UserDto.class).getTransformClass();
-        assertNotNull(clazz);
-        assertEquals(clazz, UserDto.class);
-
-        // Map class
-        Class<Map<String, Object>> mapClass = Criteria.forMap(User.class).getTransformClass();
-        assertNotNull(mapClass);
-        assertEquals(mapClass, Criteria.MAP_CLASS);
-
-        // New Criteria For Entity
-        entityClass = Criteria.newCriteria(User.class, new TransformerImplTest<>(User.class, session)).getTransformClass();
-        assertNotNull(entityClass);
-        assertEquals(entityClass, User.class);
-
-        // New Criteria For DTO
-        clazz  = Criteria.newCriteria(User.class, new TransformerImplTest<>(UserDto.class, session)).getTransformClass();
-        assertNotNull(clazz);
-        assertEquals(clazz, UserDto.class);
-
-        // New Criteria For Map
-        mapClass  = Criteria.newCriteria(User.class, new TransformerImplTest<>(Criteria.MAP_CLASS, session)).getTransformClass();
-        assertNotNull(mapClass);
-        assertEquals(mapClass, Criteria.MAP_CLASS);
-    }
-
-
-    @Test
-    public void getEntityClass() throws Exception {
-        Session session = sessionFactory.openSession();
-        // Entity Class Test
-        Class<?> entityClass = Criteria.forEntity(User.class).getEntityClass();
-        assertNotNull(entityClass);
-        assertEquals(entityClass, User.class);
-
-        // DTO Class
-        Class<?> entityClassForDto = Criteria.forDto(User.class, UserDto.class).getEntityClass();
-        assertNotNull(entityClassForDto);
-        assertEquals(entityClassForDto, User.class);
-
-        // Map class
-
-        Class<?> entityClassForMap = Criteria.forMap(User.class).getEntityClass();
-        assertNotNull(entityClassForMap);
-        assertEquals(entityClassForMap, User.class);
-
-
-        // New Criteria For Entity
-        entityClass = Criteria.newCriteria(User.class, new TransformerImplTest<>(User.class, session)).getEntityClass();
-        assertNotNull(entityClass);
-        assertEquals(entityClass, User.class);
-
-        // New Criteria For DTO
-        entityClass  = Criteria.newCriteria(User.class, new TransformerImplTest<>(UserDto.class, session)).getEntityClass();
-        assertNotNull(entityClass);
-        assertEquals(entityClass, User.class);
-
-        // New Criteria For Map
-        entityClass  = Criteria.newCriteria(User.class, new TransformerImplTest<>(Criteria.MAP_CLASS, session)).getEntityClass();
-        assertNotNull(entityClass);
-        assertEquals(entityClass, User.class);
-    }
-
-    @Test
-    public void restrict() throws Exception {
-
-    }
-
-    @Test
-    public void setGetTransformer() throws Exception {
-        Session session = sessionFactory.openSession();
-
-        // Entity Class Test
-        Transformer<User> userTransformer = new TransformerImplTest<>(User.class, session);
-        Transformer<User> transformer = Criteria.forEntity(User.class).setTransformer(userTransformer).getTransformer();
-        assertNotNull(transformer);
-        assertEquals(transformer, userTransformer);
-
-
-        // DTO Class
-        Transformer<UserDto> dtoTransformer = new TransformerImplTest<>(UserDto.class, session);
-        Transformer<UserDto> dtoResultTransformer = Criteria.forDto(User.class, UserDto.class).setTransformer(dtoTransformer).getTransformer();
-        assertNotNull(dtoResultTransformer);
-        assertEquals(dtoResultTransformer, dtoTransformer);
-
-        // Map class
-        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Criteria.MAP_CLASS, session);
-        Transformer<Map<String, Object>> mapResultTransformer = Criteria.forMap(User.class).setTransformer(mapTransformer).getTransformer();
-        assertNotNull(mapResultTransformer);
-        assertEquals(mapResultTransformer, mapTransformer);
-
-
-
-        // New Criteria For Entity
-        transformer = Criteria.newCriteria(User.class, userTransformer).getTransformer();
-        assertNotNull(transformer);
-        assertEquals(transformer, userTransformer);
-
-        // New Criteria For DTO
-        dtoResultTransformer = Criteria.newCriteria(User.class, dtoTransformer).getTransformer();
-        assertNotNull(dtoResultTransformer);
-        assertEquals(dtoResultTransformer, dtoTransformer);
-
-        // New Criteria For Map
-        mapResultTransformer = Criteria.newCriteria(User.class, mapTransformer).getTransformer();
-        assertNotNull(mapResultTransformer);
-        assertEquals(mapResultTransformer, mapTransformer);
-    }
-
     @Test
     public void list() throws Exception {
         Session session = sessionFactory.openSession();
-        // Entity Class Test
-        Transformer<User> userTransformer = new TransformerImplTest<>(User.class, session);
-        List<User> userList = Criteria.forEntity(User.class).setTransformer(userTransformer).list();
-
-        // DTO Class
+        Transformer<User> entityTransformer = new TransformerImplTest<>(User.class, session);
         Transformer<UserDto> dtoTransformer = new TransformerImplTest<>(UserDto.class, session);
-        List<UserDto> dtoList = Criteria.forDto(User.class, UserDto.class).setTransformer(dtoTransformer).list();
+        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Transformer.MAP_CLASS, session);
 
-        // Map class
-        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Criteria.MAP_CLASS, session);
-        List<Map<String, Object>> mapList = Criteria.forMap(User.class).setTransformer(mapTransformer).list();
+        // New Criteria For Entity
+        List<User> userList = Criteria.newCriteria(User.class, entityTransformer).list();
 
+        // New Criteria For DTO
+        List<UserDto> dtoList = Criteria.newCriteria(User.class, dtoTransformer).list();
+
+        // New Criteria For Map
+        List<Map<String, Object>> mapList = Criteria.newCriteria(User.class, mapTransformer).list();
+    }
+
+    @Test
+    public void pairList() throws Exception {
+        Session session = sessionFactory.openSession();
+        Transformer<User> entityTransformer = new TransformerImplTest<>(User.class, session);
+        Transformer<UserDto> dtoTransformer = new TransformerImplTest<>(UserDto.class, session);
+        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Transformer.MAP_CLASS, session);
+
+        // New Criteria For Entity
+        Result<User> userResult = Criteria.newCriteria(User.class, entityTransformer).pairList();
+
+        // New Criteria For DTO
+        Result<UserDto> dtoResult = Criteria.newCriteria(User.class, dtoTransformer).pairList();
+
+        // New Criteria For Map
+        Result<Map<String, Object>> mapResult = Criteria.newCriteria(User.class, mapTransformer).pairList();
+    }
+
+
+    @Test
+    public void count() throws Exception {
+        Session session = sessionFactory.openSession();
+        Transformer<User> entityTransformer = new TransformerImplTest<>(User.class, session);
+        Transformer<UserDto> dtoTransformer = new TransformerImplTest<>(UserDto.class, session);
+        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Transformer.MAP_CLASS, session);
 
 
         // New Criteria For Entity
-        userList = Criteria.newCriteria(User.class, userTransformer).list();
+        Long userCount = Criteria.newCriteria(User.class, entityTransformer).count();
 
         // New Criteria For DTO
-        dtoList = Criteria.newCriteria(User.class, dtoTransformer).list();
+        Long dtoCount = Criteria.newCriteria(User.class, dtoTransformer).count();
 
         // New Criteria For Map
-        mapList = Criteria.newCriteria(User.class, mapTransformer).list();
+        Long mapCount = Criteria.newCriteria(User.class, mapTransformer).count();
     }
 
     @Test
-    public void forEntity() throws Exception {
+    public void findOne() throws Exception {
         Session session = sessionFactory.openSession();
-        // Entity Class Test
-        Transformer<User> userTransformer = new TransformerImplTest<>(User.class, session);
-        List<User> userList = Criteria.forEntity(User.class).setTransformer(userTransformer).list();
-    }
-
-    @Test
-    public void forDto() throws Exception {
-        Session session = sessionFactory.openSession();
-        // DTO Class
+        Transformer<User> entityTransformer = new TransformerImplTest<>(User.class, session);
         Transformer<UserDto> dtoTransformer = new TransformerImplTest<>(UserDto.class, session);
-        List<UserDto> dtoList = Criteria.forDto(User.class, UserDto.class).setTransformer(dtoTransformer).list();
+        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Transformer.MAP_CLASS, session);
 
+        // New Criteria For Entity
+        User user = Criteria.newCriteria(User.class, entityTransformer).findOne();
+
+        // New Criteria For DTO
+        UserDto dto = Criteria.newCriteria(User.class, dtoTransformer).findOne();
+
+        // New Criteria For Map
+        Map<String, Object> map = Criteria.newCriteria(User.class, mapTransformer).findOne();
     }
 
-    @Test
-    public void forMap() throws Exception {
-        Session session = sessionFactory.openSession();
-        // Map class
-        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Criteria.MAP_CLASS, session);
-        List<Map<String, Object>> mapList = Criteria.forMap(User.class).setTransformer(mapTransformer).list();
 
+    @Test
+    public void uniqueResult() throws Exception {
+        Session session = sessionFactory.openSession();
+        Transformer<User> entityTransformer = new TransformerImplTest<>(User.class, session);
+        Transformer<UserDto> dtoTransformer = new TransformerImplTest<>(UserDto.class, session);
+        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Transformer.MAP_CLASS, session);
+
+        // New Criteria For Entity
+        User user = (User) Criteria.newCriteria(User.class, entityTransformer).uniqueResult();
+
+        // New Criteria For DTO
+        UserDto dto = (UserDto) Criteria.newCriteria(User.class, dtoTransformer).uniqueResult();
+
+        // New Criteria For Map
+        Map<String, Object> map = (Map<String, Object>) Criteria.newCriteria(User.class, mapTransformer).uniqueResult();
     }
 
     @Test
@@ -201,7 +119,7 @@ public class CriteriaTest extends DataTestTools {
         List<UserDto> dtoList = Criteria.newCriteria(User.class, dtoTransformer).list();
 
         // New Criteria For Map
-        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Criteria.MAP_CLASS, session);
+        Transformer<Map<String, Object>> mapTransformer = new TransformerImplTest<>(Transformer.MAP_CLASS, session);
         List<Map<String, Object>> mapList = Criteria.newCriteria(User.class, mapTransformer).list();
     }
 }

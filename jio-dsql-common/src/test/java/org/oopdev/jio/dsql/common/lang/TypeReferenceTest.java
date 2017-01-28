@@ -14,7 +14,6 @@ public class TypeReferenceTest {
     public void getClazz() throws Exception {
         TypeReference<Map<String, Object>> typeReference = new TypeReference<Map<String, Object>>() {};
         assertEquals(typeReference.getClazz().getName(), Map.class.getName());
-
     }
 
 }

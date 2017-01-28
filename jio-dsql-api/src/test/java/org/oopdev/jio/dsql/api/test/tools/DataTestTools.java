@@ -1,10 +1,10 @@
-package org.oopdev.jio.dsql.api;
+package org.oopdev.jio.dsql.api.test.tools;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.BeforeClass;
-import org.oopdev.jio.dsql.api.example.entity.Role;
-import org.oopdev.jio.dsql.api.example.entity.User;
+import org.oopdev.jio.dsql.api.test.tools.entity.Role;
+import org.oopdev.jio.dsql.api.test.tools.entity.User;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -21,7 +21,7 @@ public class DataTestTools {
     @BeforeClass
     public static void beforeClass(){
         if(sessionFactory == null) {
-            sessionFactory = HibernateUtil.getSessionFactory(DataTestTools.class, "org.oopdev.jio.dsql.api.example.entity");
+            sessionFactory = HibernateUtil.getSessionFactory(DataTestTools.class, "org.oopdev.jio.dsql.api.test.tools.entity");
             addRolesAndUsers();
             Session session = sessionFactory.openSession();
             session.getTransaction().begin();

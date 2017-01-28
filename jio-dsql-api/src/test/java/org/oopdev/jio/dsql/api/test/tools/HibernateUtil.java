@@ -1,4 +1,4 @@
-package org.oopdev.jio.dsql.api;
+package org.oopdev.jio.dsql.api.test.tools;
 
 /**
  * Created by kamilbukum on 20/11/16.

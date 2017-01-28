@@ -11,74 +11,15 @@ import java.util.Map;
 /**
  * Created by kamilbukum on 28/01/2017.
  */
-public class Criteria<T> {
-    /**
-     *
-     */
-    private final Class<?> entityClass;
-    /**
-     *
-     */
-    private final Class<T> transformClass;
-    private Transformer<T> transformer;
+public class Criteria<T> extends CriteriaParent<T> {
 
-    /**
-     *
-     * @param entityClass
-     */
-    private Criteria(Class<T> entityClass) {
-        this.entityClass = entityClass;
-        this.transformClass = entityClass;
+    private Criteria(String alias, Class<?> entityClass, Transformer<T> transformer) {
+        super(alias, entityClass, transformer);
     }
 
-    /**
-     *
-     * @param entityClass
-     * @param transformClass
-     */
-    private Criteria(Class<?> entityClass, Class<T> transformClass) {
-        this.entityClass = entityClass;
-        this.transformClass = transformClass;
-    }
-
-    private Criteria(Class<?> entityClass, Class<T> transformClass, Transformer<T> transformer) {
-        this.entityClass = entityClass;
-        this.transformClass = transformClass;
-        this.transformer = transformer;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Class<T> getTransformClass() {
-        return transformClass;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Class<?> getEntityClass() {
-        return entityClass;
-    }
-
-    /**
-     *
-     * @param criterion
-     * @return
-     */
+    @Override
     public Criteria<T> restrict(Criterion criterion) {
-        return this;
-    }
-
-    /**
-     *
-     * @param transformer
-     * @return
-     */
-    public Criteria<T> setTransformer(Transformer<T> transformer) {
-        this.transformer = transformer;
+        super.restrict(criterion);
         return this;
     }
 
@@ -124,23 +65,11 @@ public class Criteria<T> {
         }
     }
 
-
-    public static <E> Criteria<E> forEntity(Class<E> entityClass) {
-        return new Criteria<>(entityClass);
-    }
-
-    public static <E> Criteria<E> forDto(Class<?> entityClass, Class<E> transformClass) {
-        return new Criteria<>(entityClass, transformClass);
-    }
-
-    public static final Class<Map<String, Object>> MAP_CLASS = new TypeReference<Map<String, Object>>() {}.getClazz();
-
-    public static <E> Criteria<Map<String, Object>> forMap(Class<E> entityClass) {
-        return new Criteria<>(entityClass, MAP_CLASS);
-    }
-
     public static <E> Criteria<E> newCriteria(Class<?> entityClass, Transformer<E> transformer) {
-        return new Criteria<>(entityClass, transformer.getTransformClass(), transformer);
+        return new Criteria<>(null, entityClass, transformer);
     }
 
+    public static <E> Criteria<E> newCriteria(String alias, Class<?> entityClass, Transformer<E> transformer) {
+        return new Criteria<>(alias, entityClass, transformer);
+    }
 }

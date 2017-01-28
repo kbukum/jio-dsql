@@ -1,4 +1,4 @@
-package org.oopdev.jio.dsql.api.example.entity;
+package org.oopdev.jio.dsql.api.test.tools.entity;
 
 
 import org.hibernate.annotations.GenericGenerator;

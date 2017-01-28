@@ -1,4 +1,4 @@
-package org.oopdev.jio.dsql.api.example.dto;
+package org.oopdev.jio.dsql.api.test.tools.dto;
 
 /**
  * Created by kamilbukum on 28/01/2017.
