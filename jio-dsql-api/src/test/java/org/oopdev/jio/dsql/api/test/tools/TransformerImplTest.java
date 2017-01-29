@@ -2,8 +2,8 @@ package org.oopdev.jio.dsql.api.test.tools;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.oopdev.jio.dsql.api.cache.EntityMeta;
-import org.oopdev.jio.dsql.api.cache.EntityMetaFinder;
+import org.oopdev.jio.dsql.api.cache.Meta;
+import org.oopdev.jio.dsql.api.cache.MetaFinder;
 import org.oopdev.jio.dsql.api.criteria.Criteria;
 import org.oopdev.jio.dsql.api.criteria.transform.Result;
 import org.oopdev.jio.dsql.api.criteria.transform.Transformer;
@@ -16,8 +16,8 @@ import java.util.Map;
  * Created by kamilbukum on 28/01/2017.
  */
 public class TransformerImplTest<T> implements Transformer<T> {
-    private EntityMeta meta;
-    private static final EntityMetaFinder FINDER = new EntityMetaFinderImplTest();
+    private Meta meta;
+    private static final MetaFinder FINDER = new MetaFinderImplTest();
     private final Class<T> transformClass;
     private final Session session;
     public TransformerImplTest(Class<T> transformClass, Session session) {
@@ -63,12 +63,12 @@ public class TransformerImplTest<T> implements Transformer<T> {
     }
 
     @Override
-    public EntityMetaFinder getFinder() {
+    public MetaFinder getFinder() {
         return FINDER;
     }
 
     @Override
-    public EntityMeta getMeta() {
+    public Meta getMeta() {
         if(this.meta == null) {
             this.meta = FINDER.getEntityMeta(this.transformClass);
         }

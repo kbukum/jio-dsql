@@ -1,7 +1,7 @@
 package org.oopdev.jio.dsql.api.criteria.transform;
 
-import org.oopdev.jio.dsql.api.cache.EntityMeta;
-import org.oopdev.jio.dsql.api.cache.EntityMetaFinder;
+import org.oopdev.jio.dsql.api.cache.Meta;
+import org.oopdev.jio.dsql.api.cache.MetaFinder;
 import org.oopdev.jio.dsql.api.criteria.Criteria;
 import org.oopdev.jio.dsql.common.lang.TypeReference;
 
@@ -19,6 +19,6 @@ public interface Transformer<T> {
     T findOne(Criteria<T> criteria);
     Object uniqueResult(Criteria<T> criteria);
     Class<T> getTransformClass();
-    EntityMetaFinder getFinder();
-    EntityMeta getMeta();
+    MetaFinder getFinder();
+    Meta getMeta();
 }

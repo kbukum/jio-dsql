@@ -1,6 +1,6 @@
 package org.oopdev.jio.dsql.api.criteria;
 
-import org.oopdev.jio.dsql.api.cache.EntityMeta;
+import org.oopdev.jio.dsql.api.cache.Meta;
 import org.oopdev.jio.dsql.api.criteria.criterion.Criterion;
 import org.oopdev.jio.dsql.api.criteria.transform.Transformer;
 import org.oopdev.jio.dsql.common.util.Strings;
@@ -17,7 +17,7 @@ public abstract class CriteriaParent<T> {
     protected String alias;
     protected final Class<?> entityClass;
     protected final Transformer<T> transformer;
-    protected EntityMeta meta;
+    protected Meta meta;
     private final Map<Class<?>, CriteriaJoin<T>> joins = new LinkedHashMap<>();
     protected final List<Criterion> criterionList = new LinkedList<>();
 

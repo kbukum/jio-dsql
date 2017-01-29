@@ -1,16 +1,9 @@
-package org.oopdev.jio.dsql.api.test.tools;
+package org.oopdev.jio.dsql.api.cache;
 
-
-import org.oopdev.jio.dsql.api.cache.EntityMeta;
-import org.oopdev.jio.dsql.api.cache.EntityMetaFinder;
-import org.oopdev.jio.dsql.api.cache.FieldMeta;
-import org.oopdev.jio.dsql.api.cache.FieldReference;
 import org.oopdev.jio.dsql.api.criteria.annotations.Ignore;
 import org.oopdev.jio.dsql.api.criteria.annotations.Join;
 import org.oopdev.jio.dsql.api.criteria.annotations.Relation;
 
-import javax.persistence.Id;
-import javax.persistence.Transient;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -19,42 +12,47 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 /**
- * Created by kamilbukum on 12/01/2017.
+ * Created by kamilbukum on 29/01/2017.
  */
-public class EntityMetaFinderImplTest implements EntityMetaFinder {
+public abstract class MetaFinderImpl implements MetaFinder {
     /**
      *
      * @param entityClass
      * @return
      */
     @Override
-    public EntityMeta getEntityMeta(Class<?> entityClass) {
+    public Meta getEntityMeta(Class<?> entityClass) {
         Map<String, FieldMeta> fieldMetaMap = new LinkedHashMap<>();
         Map<String, String> relationMap = new LinkedHashMap<>();
         String identityName = fillFieldMetaMap(entityClass, fieldMetaMap, relationMap);
-        return new EntityMeta(identityName, fieldMetaMap, relationMap);
+        return new Meta(identityName, fieldMetaMap, relationMap);
     }
 
+    public abstract Predicate<Field> predicateTransient();
+    public abstract Predicate<Field> predicateId();
+    public Predicate<Field> predicateField() {
+        return ENTITY_FIELD_PREDICATE;
+    }
     /**
      *
      * @param type
      * @param fieldMetaMap
      * @return
      */
-    public static String fillFieldMetaMap(Class<?> type, Map<String, FieldMeta> fieldMetaMap, Map<String, String> relationMap) {
+    public String fillFieldMetaMap(Class<?> type, Map<String, FieldMeta> fieldMetaMap, Map<String, String> relationMap) {
         String identityName = null;
 
         for(Field field: type.getDeclaredFields()) {
-            if(!ENTITY_FIELD_PREDICATE.test(field)) continue;
+            if(!predicateField().test(field)) continue;
             field.setAccessible(true);
             Relation hasRelation = field.getAnnotation(Relation.class);
-            Transient isTransient = field.getAnnotation(Transient.class);
+            boolean isTransient = predicateTransient().test(field);
             Ignore ignore = field.getAnnotation(Ignore.class);
             Join searchFrom = field.getAnnotation(Join.class);
             boolean collection = Collection.class.isAssignableFrom(field.getType());
             FieldMeta meta;
             if(searchFrom == null) { // this field hasn't any target
-                meta = new FieldMeta(field, isTransient != null,ignore != null, hasRelation != null, collection);
+                meta = new FieldMeta(field, isTransient,ignore != null, hasRelation != null, collection);
             }  else {
                 FieldReference reference = new FieldReference(
                         searchFrom.target(),
@@ -62,7 +60,7 @@ public class EntityMetaFinderImplTest implements EntityMetaFinder {
                         searchFrom.id(),
                         field.getName()
                 );
-                meta = new FieldMeta(field, reference, isTransient != null,ignore != null, hasRelation != null, collection);
+                meta = new FieldMeta(field, reference, isTransient,ignore != null, hasRelation != null, collection);
             }
 
             fieldMetaMap.put(field.getName(), meta);
@@ -70,7 +68,7 @@ public class EntityMetaFinderImplTest implements EntityMetaFinder {
                 meta.setRelationName(hasRelation.value());
                 relationMap.put(hasRelation.value(), field.getName());
             }
-            if(ENTITY_ID_FIELD_PREDICATE.test(field)) {
+            if(predicateId().test(field)) {
                 identityName = field.getName();
             }
         }
@@ -83,12 +81,6 @@ public class EntityMetaFinderImplTest implements EntityMetaFinder {
         }
         return identityName;
     }
-
-
-    private static final Predicate<Field> ENTITY_ID_FIELD_PREDICATE = (field) -> {
-        if(field.getAnnotation(Id.class) != null) return true;
-        return false;
-    };
 
     private static final Predicate<Field> ENTITY_FIELD_PREDICATE = (field) -> {
         if(field.isSynthetic()) return false;

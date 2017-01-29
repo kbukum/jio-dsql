@@ -5,12 +5,12 @@ import java.util.Map;
 /**
  * Created by kamilbukum on 12/01/2017.
  */
-public class EntityMeta {
+public class Meta {
     private final String identityName;
     private final Map<String, FieldMeta> fieldMap;
     private final Map<String, String> relationMap;
 
-    public EntityMeta(String identityName, Map<String, FieldMeta> fieldMap, Map<String, String> relationMap) {
+    public Meta(String identityName, Map<String, FieldMeta> fieldMap, Map<String, String> relationMap) {
         this.identityName = identityName;
         this.fieldMap = fieldMap;
         this.relationMap = relationMap;
