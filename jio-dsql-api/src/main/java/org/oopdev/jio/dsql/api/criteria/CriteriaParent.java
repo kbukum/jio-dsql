@@ -1,7 +1,8 @@
 package org.oopdev.jio.dsql.api.criteria;
 
 import org.oopdev.jio.dsql.api.cache.Meta;
-import org.oopdev.jio.dsql.api.criteria.criterion.Criterion;
+import org.oopdev.jio.dsql.api.criteria.criterion.Restriction;
+import org.oopdev.jio.dsql.api.criteria.projection.Projection;
 import org.oopdev.jio.dsql.api.criteria.transform.Transformer;
 import org.oopdev.jio.dsql.common.util.Strings;
 
@@ -11,20 +12,39 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by kamilbukum on 28/01/2017.
+ * Created by kamilbukum on 10/01/2017.
  */
-public abstract class CriteriaParent<T> {
-    protected String alias;
-    protected final Class<?> entityClass;
-    protected final Transformer<T> transformer;
-    protected Meta meta;
-    private final Map<Class<?>, CriteriaJoin<T>> joins = new LinkedHashMap<>();
-    protected final List<Criterion> criterionList = new LinkedList<>();
-
-    protected CriteriaParent(String alias, Class<?> entityClass, Transformer<T> transformer) {
+public abstract class CriteriaParent<E> {
+    /**
+     * Entity Alias
+     */
+    private final String alias;
+    /**
+     * Entity class Type
+     */
+    private final Class<?> entityClass;
+    private final Map<String, CriteriaJoin<E>> joins = new LinkedHashMap<>(0);
+    private final List<Restriction> restrictions = new LinkedList<>();
+    private final Meta meta;
+    private Projection projection;
+    private final Transformer<E> transformer;
+    private final Map<String, Integer> aliasesMap;
+    /**
+     * @param entityClass
+     */
+    protected CriteriaParent(String alias, Class<?> entityClass, Transformer<E> transformer, Map<String, Integer> aliasesMap){
         this.entityClass = entityClass;
+        this.aliasesMap = aliasesMap;
         this.transformer = transformer;
-        this.alias = alias == null ? Strings.unCapitalizeFirstChar(entityClass.getSimpleName()): alias;
+
+        alias = "$" + (alias != null ? alias : Strings.unCapitalizeFirstChar(entityClass.getSimpleName()));
+        if(aliasesMap.containsKey(alias)) {
+            Integer aliasCount = aliasesMap.getOrDefault(alias, 0);
+            aliasCount++;
+            aliasesMap.put(alias, aliasCount);
+            alias = alias + "_" + aliasCount;
+        }
+        this.alias = alias;
         if(transformer.getTransformClass() != null && this.entityClass.getName().equals(transformer.getTransformClass().getName())) {
             this.meta = transformer.getMeta();
         } else {
@@ -32,47 +52,90 @@ public abstract class CriteriaParent<T> {
         }
     }
 
-    public CriteriaJoin<T> join(Class<?> entityClass){
-        CriteriaJoin<T> join = new CriteriaJoin<>(null, entityClass, this);
-        joins.put(entityClass, join);
+    /**
+     *
+     * creates {@link CriteriaParent}
+     * @param entityClass
+     * @return
+     */
+    public CriteriaJoin<E> createJoin(Class<?> entityClass) {
+        return createJoin(null, entityClass, null);
+    }
+    /**
+     *
+     * creates {@link CriteriaParent}
+     * @param entityClass
+     * @return
+     */
+    public CriteriaJoin<E> createJoin(Class<?> entityClass, String referenceId) {
+        return createJoin(null, entityClass, referenceId);
+    }
+    /**
+     *
+     * creates {@link CriteriaParent}
+     * @param entityClass
+     * @return
+     */
+    public CriteriaJoin<E> createJoin(String alias, Class<?> entityClass) {
+        return createJoin(alias, entityClass, null);
+    }
+    /**
+     *
+     * creates {@link CriteriaParent}
+     * @param entityClass
+     * @return
+     */
+    public CriteriaJoin<E> createJoin(String alias, Class<?> entityClass, String referenceId) {
+        CriteriaJoin<E> join = new CriteriaJoin<>(this, alias, entityClass, this.getTransformer(), referenceId, this.aliasesMap);
+        joins.put(join.getAlias(), join);
         return join;
     }
 
-    public CriteriaJoin<T> join(String alias, Class<?> entityClass){
-        CriteriaJoin<T> join = new CriteriaJoin<>(alias, entityClass, this);
-        joins.put(entityClass, join);
-        return join;
+    public CriteriaJoin<E> getJoin(String alias) {
+        return joins.get(alias);
     }
 
-
-    public Transformer<T> getTransformer() {
-        return transformer;
+    public Map<String, CriteriaJoin<E>> getJoins() {
+        return joins;
     }
 
+    public Projection getProjection() {
+        return projection;
+    }
 
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public CriteriaParent<E> add(Restriction restriction) {
+        restrictions.add(restriction);
+        return this;
+    }
+
+    public List<Restriction> getRestrictions() {
+        return restrictions;
     }
 
     public String getAlias() {
         return alias;
     }
 
-    /**
-     *
-     * @return
-     */
+    public abstract CriteriaParent<E> addOrder(Order order);
+
+    public Meta getMeta() {
+        return meta;
+    }
+
     public Class<?> getEntityClass() {
         return entityClass;
     }
 
-    /**
-     *
-     * @param criterion
-     * @return
-     */
-    public CriteriaParent<T> restrict(Criterion criterion) {
-        criterionList.add(criterion);
+    public CriteriaParent<E> setProjection(Projection projection) {
+        this.projection = projection;
         return this;
     }
+
+    public Transformer<E> getTransformer() {
+        return transformer;
+    }
+
+    public abstract boolean isRoot();
 }
+
+

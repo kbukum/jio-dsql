@@ -2,7 +2,6 @@ package org.oopdev.jio.dsql.api.criteria;
 
 import org.hibernate.Session;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import org.oopdev.jio.dsql.api.criteria.transform.Result;
 import org.oopdev.jio.dsql.api.test.tools.DataTestTools;
@@ -28,12 +27,13 @@ public class CriteriaTest extends DataTestTools {
 
         // New Criteria For Entity
         List<User> userList = Criteria.newCriteria(User.class, entityTransformer).list();
-
+        System.out.println(userList);
         // New Criteria For DTO
         List<UserDto> dtoList = Criteria.newCriteria(User.class, dtoTransformer).list();
-
+        System.out.println(dtoList);
         // New Criteria For Map
         List<Map<String, Object>> mapList = Criteria.newCriteria(User.class, mapTransformer).list();
+        System.out.println(mapList);
     }
 
     @Test

@@ -27,7 +27,7 @@ public class TransformerImplTest<T> implements Transformer<T> {
 
     @Override
     public List<T> list(Criteria<T> criteria) {
-        Pair<String, Map<String, Object>> resultPair = TransformerUtil.list(criteria);
+        Pair<String, Map<String, Object>> resultPair = TransformerUtil.query(criteria);
         Query query = session.createQuery(resultPair.getLeft());
         if(resultPair.getRight() != null) {
             for(Map.Entry<String, Object> entry: resultPair.getRight().entrySet()) {
@@ -39,21 +39,46 @@ public class TransformerImplTest<T> implements Transformer<T> {
 
     @Override
     public Long count(Criteria<T> criteria) {
-        return null;
+        Pair<String, Map<String, Object>> resultPair = TransformerUtil.count(criteria);
+        Query query = session.createQuery(resultPair.getLeft());
+        if(resultPair.getRight() != null) {
+            for(Map.Entry<String, Object> entry: resultPair.getRight().entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return (long)query.uniqueResult();
     }
 
     @Override
     public Result<T> pairList(Criteria<T> criteria) {
-        return null;
-    }
-
-    @Override
-    public T findOne(Criteria<T> criteria) {
-        return null;
+        Pair<String,Pair<String, Map<String, Object>>> resultPair = TransformerUtil.pairList(criteria);
+        Query listQuery = session.createQuery(resultPair.getLeft());
+        Query countQuery = session.createQuery(resultPair.getRight().getLeft());
+        if(resultPair.getRight().getRight() != null) {
+            for(Map.Entry<String, Object> entry: resultPair.getRight().getRight().entrySet()) {
+                listQuery.setParameter(entry.getKey(), entry.getValue());
+                countQuery.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        List<T> list = listQuery.list();
+        Long count = (long)countQuery.uniqueResult();
+        return new Result<>(list, count);
     }
 
     @Override
     public Object uniqueResult(Criteria<T> criteria) {
+        Pair<String, Map<String, Object>> resultPair = TransformerUtil.query(criteria);
+        Query query = session.createQuery(resultPair.getLeft());
+        if(resultPair.getRight() != null) {
+            for(Map.Entry<String, Object> entry: resultPair.getRight().entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return query.uniqueResult();
+    }
+
+    @Override
+    public T findOne(Criteria<T> criteria) {
         return null;
     }
 

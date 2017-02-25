@@ -4,12 +4,14 @@ package org.oopdev.jio.dsql.api.cache;
  */
 public class FieldReference {
     private final Class<?> targetEntity;
+    private String[] selects;
     private String[] filters;
     private final String identityName;
     private final String referenceId;
 
-    public FieldReference(Class<?> targetEntity, String[] filters, String identityName, String referenceId) {
+    public FieldReference(Class<?> targetEntity, String[] selects,String[] filters, String identityName, String referenceId) {
         this.targetEntity = targetEntity;
+        this.selects = selects;
         this.filters = filters;
         this.identityName = identityName;
         this.referenceId = referenceId;
