@@ -1,7 +1,6 @@
 package org.oopdev.jio.dsql.api.test.tools;
 
-
-import org.oopdev.jio.dsql.api.cache.*;
+import org.oopdev.jio.dsql.api.cache.MetaFinderImpl;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -9,9 +8,10 @@ import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
 /**
- * Created by kamilbukum on 12/01/2017.
+ * Created by kamilbukum on 29/01/2017.
  */
-public class MetaFinderImplTest extends MetaFinderImpl {
+public class MetaFinderJpaImplTest extends MetaFinderImpl {
+    public static MetaFinderJpaImplTest finderJpa = new MetaFinderJpaImplTest();
     @Override
     public Predicate<Field> predicateTransient() {
         return ENTITY_FIELD_IS_TRANSIENT;

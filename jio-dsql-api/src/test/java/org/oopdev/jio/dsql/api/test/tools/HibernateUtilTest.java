@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class HibernateUtil {
+public class HibernateUtilTest {
 
     private static Map<String, SessionFactory> factoryMap = new LinkedHashMap<>();
     public static SessionFactory buildSessionFactory(Class<?> testClass, String scanPackage){

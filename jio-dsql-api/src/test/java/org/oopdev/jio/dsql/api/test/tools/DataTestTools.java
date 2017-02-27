@@ -21,7 +21,7 @@ public class DataTestTools {
     @BeforeClass
     public static void beforeClass(){
         if(sessionFactory == null) {
-            sessionFactory = HibernateUtil.getSessionFactory(DataTestTools.class, "org.oopdev.jio.dsql.api.test.tools.entity");
+            sessionFactory = HibernateUtilTest.getSessionFactory(DataTestTools.class, "org.oopdev.jio.dsql.api.test.tools.entity");
             addRolesAndUsers();
             Session session = sessionFactory.openSession();
             session.getTransaction().begin();

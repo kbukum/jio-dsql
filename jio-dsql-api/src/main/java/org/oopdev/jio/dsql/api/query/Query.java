@@ -1,14 +1,18 @@
 package org.oopdev.jio.dsql.api.query;
 
-import io.robe.common.service.search.model.SearchModel;
-import io.robe.common.utils.Validations;
-import io.robe.common.utils.reflection.Fields;
-import io.robe.hibernate.criteria.api.*;
-import io.robe.hibernate.criteria.api.cache.FieldMeta;
-import io.robe.hibernate.criteria.api.criterion.Restrictions;
-import io.robe.hibernate.criteria.api.projection.ProjectionList;
-import io.robe.hibernate.criteria.api.projection.Projections;
+import org.oopdev.jio.dsql.api.cache.FieldMeta;
+import org.oopdev.jio.dsql.api.criteria.Criteria;
+import org.oopdev.jio.dsql.api.criteria.CriteriaJoin;
+import org.oopdev.jio.dsql.api.criteria.CriteriaParent;
+import org.oopdev.jio.dsql.api.criteria.Order;
+import org.oopdev.jio.dsql.api.criteria.criterion.Operator;
+import org.oopdev.jio.dsql.api.criteria.criterion.Restrictions;
+import org.oopdev.jio.dsql.api.criteria.projection.ProjectionList;
+import org.oopdev.jio.dsql.api.criteria.projection.Projections;
+import org.oopdev.jio.dsql.api.criteria.transform.Transformer;
 import org.oopdev.jio.dsql.api.query.search.SearchModel;
+import org.oopdev.jio.dsql.common.util.Fields;
+import org.oopdev.jio.dsql.common.util.Strings;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +77,7 @@ public class Query<E> {
             for(String[] filter: filters) {
                 if(filter == null || filter.length == 0) continue;
                 String name = filter[0];
-                if(Validations.isEmptyOrNull(name)) continue;
+                if(Strings.isEmptyOrNull(name)) continue;
 
                 String op = filter.length > 1 ? filter[1]: null;
                 String rawValue = filter.length > 2 ? filter[2]: null;
@@ -81,7 +85,7 @@ public class Query<E> {
                 if(holder == null) continue;
 
                 FieldMeta fieldMeta = holder.currentFieldMeta;
-                Object value = Validations.isEmptyOrNull(rawValue) ? null: getValue(op, rawValue, fieldMeta.getField().getType());
+                Object value = Strings.isEmptyOrNull(rawValue) ? null: getValue(op, rawValue, fieldMeta.getField().getType());
                 addRestriction(holder, op, value);
             }
         }
@@ -103,7 +107,7 @@ public class Query<E> {
         if(projections != null && projections.length > 0) {
             for(String projection: projections) {
                 // if projection is empty then ignore it
-                if(Validations.isEmptyOrNull(projection)) continue;
+                if(Strings.isEmptyOrNull(projection)) continue;
 
                 Holder<E> holder = configureFieldByName(criteria, projection);
                 if(holder == null) continue;
@@ -160,7 +164,7 @@ public class Query<E> {
     // roleOid.permissionOid.name
     // roleOid.permissionOid.code
     public static <E> Holder<E> configureFieldByName(Criteria<E> criteria, String name){
-        if(Validations.isEmptyOrNull(name)) return null;
+        if(Strings.isEmptyOrNull(name)) return null;
         // parse x.y name as [x, y]
         String[] names = name.split("\\.");
         // uses to keep current name by names index.
@@ -175,7 +179,7 @@ public class Query<E> {
         do {
             // get current name of field by index. like x.y.z => if step = 1 then currentName = y
             currentName = names[step];
-            if(Validations.isEmptyOrNull(currentName)) {
+            if(Strings.isEmptyOrNull(currentName)) {
                 throw new RuntimeException(currentName + " defined name is wrong ! ");
             }
             currentFieldMeta = criteria.getMeta().getFieldMap().get(currentName);
